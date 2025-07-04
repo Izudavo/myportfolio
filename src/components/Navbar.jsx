@@ -1,14 +1,38 @@
-import { 
-  AppBar, 
-  Toolbar, 
-  Button, 
-  Box, 
+import { useState } from 'react';
+import {
+  AppBar,
+  Toolbar,
+  Button,
+  Box,
   Container,
-  Typography // Added missing import
+  Typography,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  useMediaQuery,
+  useTheme
 } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
 
 const Navbar = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const toggleDrawer = (open) => () => {
+    setDrawerOpen(open);
+  };
+
+  const navLinks = [
+    { label: 'Home', path: '/' },
+    { label: 'About', path: '/about' },
+    { label: 'Resources', path: '/resources' },
+  ];
+
   return (
     <AppBar 
       position="static" 
@@ -20,77 +44,69 @@ const Navbar = () => {
       }}
     >
       <Container maxWidth="lg">
-        <Toolbar sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between',
-          px: 0 // Remove default padding
-        }}>
-          <Box>
-            <Link to="/" style={{ textDecoration: 'none' }}>
-              <Typography 
-                variant="h6" 
-                component="div" 
-                sx={{ 
-                  color: 'var(--light-text)',
-                  fontWeight: 700,
-                  letterSpacing: '0.5px'
-                }}
+        <Toolbar sx={{ justifyContent: 'space-between', px: 0 }}>
+          {/* Logo */}
+          <Link to="/" style={{ textDecoration: 'none' }}>
+            <Typography 
+              variant="h6"
+              sx={{ color: 'var(--light-text)', fontWeight: 700, letterSpacing: '0.5px' }}
+            >
+              David Obinta
+            </Typography>
+          </Link>
+
+          {/* Desktop Links */}
+          {!isMobile && (
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              {navLinks.map((link) => (
+                <Button
+                  key={link.label}
+                  component={Link}
+                  to={link.path}
+                  sx={{
+                    color: 'var(--light-text)',
+                    textTransform: 'none',
+                    fontWeight: 500,
+                    fontSize: '1rem',
+                    '&:hover': {
+                      color: 'var(--secondary-color)',
+                      backgroundColor: 'transparent'
+                    }
+                  }}
+                >
+                  {link.label}
+                </Button>
+              ))}
+            </Box>
+          )}
+
+          {/* Mobile Hamburger */}
+          {isMobile && (
+            <>
+              <IconButton
+                edge="end"
+                color="inherit"
+                onClick={toggleDrawer(true)}
+                aria-label="menu"
               >
-                David Obinta
-              </Typography>
-            </Link>
-          </Box>
-          
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button 
-              component={Link} 
-              to="/" 
-              sx={{ 
-                color: 'var(--light-text)',
-                textTransform: 'none',
-                fontWeight: 500,
-                fontSize: '1rem',
-                '&:hover': {
-                  color: 'var(--secondary-color)',
-                  backgroundColor: 'transparent'
-                }
-              }}
-            >
-              Home
-            </Button>
-            <Button 
-              component={Link} 
-              to="/about" 
-              sx={{ 
-                color: 'var(--light-text)',
-                textTransform: 'none',
-                fontWeight: 500,
-                fontSize: '1rem',
-                '&:hover': {
-                  color: 'var(--secondary-color)',
-                  backgroundColor: 'transparent'
-                }
-              }}
-            >
-              About
-            </Button>
-            <Button 
-              component={Link} 
-              to="/resources" 
-              sx={{ 
-                color: 'var(--light-text)',
-                textTransform: 'none',
-                fontWeight: 500,
-                fontSize: '1rem',
-                '&:hover': {
-                  color: 'var(--secondary-color)',
-                  backgroundColor: 'transparent'
-                }
-              }}
-            >
-              Resources
-            </Button>
-          </Box>
+                <MenuIcon />
+              </IconButton>
+
+              <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
+                <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
+                  <List>
+                    {navLinks.map((link) => (
+                      <ListItem key={link.label} disablePadding>
+                        <ListItemButton component={Link} to={link.path}>
+                          <ListItemText primary={link.label} />
+                        </ListItemButton>
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+              </Drawer>
+            </>
+          )}
         </Toolbar>
       </Container>
     </AppBar>

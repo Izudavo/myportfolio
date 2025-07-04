@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { Box, Button, Typography, Paper, Divider } from '@mui/material';
+import {
+  Box,
+  Button,
+  Typography,
+  Paper,
+  Divider,
+  useTheme,
+  useMediaQuery
+} from '@mui/material';
 import { Calculate, Backspace, Functions } from '@mui/icons-material';
 
 const Calculator = () => {
@@ -7,6 +15,9 @@ const Calculator = () => {
   const [previousInput, setPreviousInput] = useState(null);
   const [operation, setOperation] = useState(null);
   const [memory, setMemory] = useState(0);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleNumberClick = (number) => {
     if (input === '0' || input === 'Error') {
@@ -25,7 +36,7 @@ const Calculator = () => {
 
   const handleOperationClick = (op) => {
     if (input === 'Error') return;
-    
+
     setPreviousInput(input);
     setOperation(op);
     setInput('0');
@@ -33,12 +44,12 @@ const Calculator = () => {
 
   const handleEquals = () => {
     if (!previousInput || !operation || input === 'Error') return;
-    
+
     try {
       let result;
       const prev = parseFloat(previousInput);
       const current = parseFloat(input);
-      
+
       switch (operation) {
         case '+':
           result = prev + current;
@@ -56,12 +67,12 @@ const Calculator = () => {
           result = Math.pow(prev, current);
           break;
         case '√':
-          result = Math.pow(prev, 1/current);
+          result = Math.pow(prev, 1 / current);
           break;
         default:
           return;
       }
-      
+
       setInput(result.toString());
       setPreviousInput(null);
       setOperation(null);
@@ -74,7 +85,7 @@ const Calculator = () => {
     try {
       let result;
       const current = parseFloat(input);
-      
+
       switch (fn) {
         case 'sin':
           result = Math.sin(current * Math.PI / 180);
@@ -95,8 +106,8 @@ const Calculator = () => {
           result = Math.sqrt(current);
           break;
         case 'fact':
-          result = Array.from({length: current}, (_, i) => i + 1)
-                    .reduce((acc, val) => acc * val, 1);
+          result = Array.from({ length: current }, (_, i) => i + 1)
+            .reduce((acc, val) => acc * val, 1);
           break;
         case 'π':
           result = Math.PI;
@@ -107,7 +118,7 @@ const Calculator = () => {
         default:
           return;
       }
-      
+
       setInput(result.toString());
     } catch {
       setInput('Error');
@@ -177,66 +188,72 @@ const Calculator = () => {
   ];
 
   return (
-    <Paper elevation={6} sx={{ 
-      p: 3, 
-      width: 400,
-      borderRadius: 4,
-      background: 'linear-gradient(145deg, #f5f5f5, #e0e0e0)'
-    }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-        <Functions sx={{ mr: 1, fontSize: 32 }} />
-        <Typography variant="h4" component="h1">
-          Scientific Calculator
-        </Typography>
-      </Box>
-      
-      <Box sx={{ 
-        mb: 3, 
-        p: 2,
-        backgroundColor: 'rgba(0, 0, 0, 0.05)',
-        borderRadius: 2,
-        textAlign: 'right',
-        minHeight: 60
-      }}>
-        <Typography variant="subtitle2" color="text.secondary" sx={{ minHeight: 20 }}>
-          {previousInput} {operation}
-        </Typography>
-        <Typography variant="h4" sx={{ 
-          wordBreak: 'break-all',
-          fontWeight: 500
-        }}>
-          {input}
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          Memory: {memory}
-        </Typography>
-      </Box>
-      
-      <Divider sx={{ my: 2 }} />
-      
-      <Box sx={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(5, 1fr)',
-        gap: 1.5
-      }}>
-        {buttons.map((btn) => (
-          <Button
-            key={btn.label}
-            variant="contained"
-            onClick={btn.action}
-            color={btn.color || 'inherit'}
-            sx={{ 
-              minWidth: 0,
-              height: 56,
-              fontSize: btn.label.length > 2 ? '0.875rem' : '1.25rem',
-              fontWeight: btn.color ? 600 : 400
-            }}
-          >
-            {btn.icon || btn.label}
-          </Button>
-        ))}
-      </Box>
-    </Paper>
+    <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+      <Paper
+        elevation={6}
+        sx={{
+          p: 3,
+          width: isMobile ? '100%' : 400,
+          borderRadius: 4,
+          background: 'linear-gradient(145deg, #f5f5f5, #e0e0e0)'
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <Functions sx={{ mr: 1, fontSize: 32 }} />
+          <Typography variant="h5" component="h1">
+            Scientific Calculator
+          </Typography>
+        </Box>
+
+        <Box
+          sx={{
+            mb: 3,
+            p: 2,
+            backgroundColor: 'rgba(0, 0, 0, 0.05)',
+            borderRadius: 2,
+            textAlign: 'right',
+            minHeight: 60
+          }}
+        >
+          <Typography variant="subtitle2" color="text.secondary">
+            {previousInput} {operation}
+          </Typography>
+          <Typography variant="h4" sx={{ wordBreak: 'break-word', fontWeight: 500 }}>
+            {input}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            Memory: {memory}
+          </Typography>
+        </Box>
+
+        <Divider sx={{ my: 2 }} />
+
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? 'repeat(3, 1fr)' : 'repeat(5, 1fr)',
+            gap: 1.5
+          }}
+        >
+          {buttons.map((btn) => (
+            <Button
+              key={btn.label}
+              variant="contained"
+              onClick={btn.action}
+              color={btn.color || 'inherit'}
+              sx={{
+                minWidth: 0,
+                height: 56,
+                fontSize: btn.label.length > 2 ? '0.75rem' : '1.1rem',
+                fontWeight: btn.color ? 600 : 400
+              }}
+            >
+              {btn.icon || btn.label}
+            </Button>
+          ))}
+        </Box>
+      </Paper>
+    </Box>
   );
 };
 
