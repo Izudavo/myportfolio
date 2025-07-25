@@ -1,4 +1,3 @@
-// src/components/Footer.jsx
 import { Box, Typography, Container, IconButton } from '@mui/material';
 import { motion } from 'framer-motion';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';

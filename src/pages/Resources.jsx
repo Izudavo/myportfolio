@@ -2,6 +2,7 @@ import { Container, Box, Typography, Tabs, Tab, Paper } from '@mui/material';
 import { useState } from 'react';
 import BMICalculator from '../components/BMICalculator';
 import Calculator from '../components/Calculator';
+import GPACalculator from '../components/GPACalculator';
 import Footer from '../components/Footer';
 
 const Resources = () => {
@@ -68,11 +69,20 @@ const Resources = () => {
               fontSize: '1rem'
             }} 
           />
+          <Tab 
+            label="GPA Calculator" 
+            sx={{ 
+              fontWeight: 500,
+              textTransform: 'none',
+              fontSize: '1rem'
+            }} 
+          />
         </Tabs>
         
         <Box sx={{ p: 4 }}>
           {activeTab === 0 && <BMICalculator />}
           {activeTab === 1 && <Calculator />}
+          {activeTab === 2 && <GPACalculator />}
         </Box>
       </Paper>
     </Container>
